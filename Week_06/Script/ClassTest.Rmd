@@ -1,0 +1,25 @@
+---
+title: "Class Practice"
+author: "Sandy Illescas"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = TRUE, # code appears AND also images that are embedded
+	message = FALSE,#  never show messages
+	warning = FALSE) # never show warning
+```
+
+## R Markdown
+
+```{r}
+library(tidyverse)
+library(beepr)
+
+beep(8)
+
+
+```
+
