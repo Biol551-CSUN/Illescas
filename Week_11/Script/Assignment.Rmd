@@ -68,10 +68,10 @@ Intertidal_Factors # allows you to view changes and confirm Quadrat is now a fac
 
 ```{r}
 p1 <- ggplot(data = Intertidal_Factors, 
-                    aes(x = Quadrat,
+                    aes(x = Quadrat   # assigning x and y values to be used
                         y = n,
                         fill = Quadrat)) +
-            geom_point(aes(color = Quadrat, size = Quadrat, shape = Quadrat)) + # type of graph to make
+            geom_point(aes(color = Quadrat, size = Quadrat, shape = Quadrat)) + # type of graph to make and add color, size and shape to points being plotted. 
              scale_color_viridis_d() +
             labs (x = " Quadrat Location at Tide Level", # Label axis and title 
                   y = "Number of Tides",
