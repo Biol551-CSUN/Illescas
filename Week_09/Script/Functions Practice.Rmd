@@ -1,0 +1,35 @@
+---
+title: "Practice with Functions"
+author: "Sandy Illescas"
+date: "`r Sys.Date(2023-04-04)`"
+output: 
+  html_document
+    toc: TRUE
+    toc_float: TRUE
+    theme: darkly
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = TRUE, # code appears AND also images that are embedded
+	message = FALSE,#  never show messages
+	warning = FALSE) # never show warning
+```
+
+# Introduction
+
+Today we are going to practice creating funtions in and out plots using *RMarkdown*
+
+# Load Libraries
+```{r}
+library(here)
+library(tidyverse)
+library(table2)
+```
+
+#Inspect the Data
+```{r}
+glimpse(table2)
+```
+
+Make a Plot
