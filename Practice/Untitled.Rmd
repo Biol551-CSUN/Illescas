@@ -1,0 +1,31 @@
+---
+title: "My Plot"
+author: "Sandy Illescas"
+date: "2023-04-02"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(ggplot2)
+library(plotly)
+
+# Load the msleep dataset
+data(msleep)
+
+# Remove incomplete data
+msleep <- na.omit(msleep)
+
+# Create the bar graph
+S <- ggplot(msleep, aes(x = reorder(vore, sleep_total), y = sleep_total, fill = vore)) +
+  geom_bar(stat = "identity") +
+  scale_fill_manual(values = c("red", "green", "blue", "yellow")) +
+  labs(title = "Hours of Sleep by Diet Type", x = "Diet Type", y = "Hours of Sleep") +
+  theme(plot.title = element_text(hjust = 0.5), legend.position = "none")
+
+# Make the graph interactive and animated
+ggplotly(S, transition = list(easing = "linear", duration = 500))
+
+S
+```
+
+
