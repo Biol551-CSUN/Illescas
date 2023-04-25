@@ -27,7 +27,6 @@ library(here) #this allows us to tell R where to find our file
 library(tidyverse) # using tidyverse
 library(janitor) # for practicing data clean up
 library(tidytext) # used for data clean up as well
-library(reticulate)
 ```
 
 
