@@ -1,0 +1,85 @@
+---
+title: "Week 11 Assignment"
+author: "Sandy Illescas"
+date: "2023-04-23"
+output: html_document
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  fig.path = "../Output/",
+	message = FALSE,
+	warning = FALSE
+)
+```
+# Goals for today include:
+  - Make a plot using lessons from Week 11, "Strings" & "Functions
+    (one axis must be a factor)
+  - reorder factors in a way that make sense
+  - Clean up data using janitor (lean headers as well)
+ 
+## Load Your Libraries
+
+```{r}
+library(here) #this allows us to tell R where to find our file 
+library(tidyverse) # using tidyverse
+library(janitor) # for practicing data clean up
+library(tidytext) # used for data clean up as well
+library(reticulate)
+```
+
+
+## Load Your data
+```{r}
+Intertidal_Data <- read_csv(here("Week_11","Data","intertidaldata.csv")) #this tells R to use data saved in my folder
+
+view(Intertidal_Data)
+```
+
+
+
+## Problematic Columns:
+Upon viewing data, the first inconsistency I found is the "Quadrat" column, there is a "Mid 1", while all other entries are specifically "Low", "Mid", and "High". All other columns appear to be consistent, so I will focus on fixing this column.
+```{r}
+Intertidal_Data$Quadrat # This pulls up all of the entries found in the "Quadrat" column
+```
+
+#### While inspecting data closer, there are a couple of inconsistencies, one with "Low  ." and also previously mentioned "Mid 1". Here we will use our "strings" knowledge to to fix both of these inconsistensies.
+
+```{r}
+Intertidal_Data$Quadrat <- str_replace(Intertidal_Data$Quadrat, "Mid  1", "Mid") # this replaces "Mid 1" entry with "Mid"
+Intertidal_Data$Quadrat <- str_replace(Intertidal_Data$Quadrat, "Low  \\.","Low") # this replaess "Low  ." with "Low"
+
+view(Intertidal_Data)
+```
+## Data is now clean, we will focus on creating factors out of the Quadrat Loactions
+
+```{r}
+Intertidal_Factors<-Intertidal_Data %>% # makes new data for quadrat as factors
+                    mutate(Quadrat = factor(Quadrat, levels=c("Low", "Mid", "High")))  %>% # makes quadrat into factors
+                    count(Quadrat) # this creates a column of counts dependant on "n"
+Intertidal_Factors # allows you to view changes and confirm Quadrat is now a factor and we can see that it is labeled "<fctr>" underneath Quadrat label. 
+```
+
+# Making a Graph
+
+
+```{r}
+p1 <- ggplot(data = Intertidal_Factors, 
+                    aes(x = Quadrat,
+                        y = n,
+                        fill = Quadrat)) +
+            geom_point(aes(color = Quadrat, size = Quadrat, shape = Quadrat)) + # type of graph to make
+             scale_color_viridis_d() +
+            labs (x = " Quadrat Location at Tide Level", # Label axis and title 
+                  y = "Number of Tides",
+                  title = "Number of Tides Observed at Each Tide Level")
+p1
+```
+
+
+
+
+
