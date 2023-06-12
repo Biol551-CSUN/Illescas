@@ -1,0 +1,103 @@
+---
+title: "HW Week 5"
+author: "Sandy Illescas"
+date: "2023-05-25"
+output: html_document
+   
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(
+	fig.path = "Output/",
+	message = FALSE,
+	warning = TRUE,
+	include = TRUE,
+	root.dir = "~/Users/SandyCruz/Desktop/Repositories/Illescas/Week_05/Data"
+)
+```
+
+```{r, include=FALSE}
+#-Assignment: 
+#Read in both the conductivity and depth data.
+#-Convert date columns appropriately
+#-Round the conductivity data to the nearest 10 seconds so that it matches with the depth data
+#-Join the two dataframes together (in a way where there will be no NAs... i.e. join in a way where only exact matches between the two dataframes are kept)
+#take averages of date, depth, temperature, and salinity by minute (hint: easiest way to do this is to make a new column where the hours and minutes are extracted)
+#-Make any plot using the averaged data
+#-Do the entire thing using mostly pipes (i.e. you should not have a bunch of different dataframes). Keep it clean.
+#-Don't forget to comment!
+#-Save the output, data, and scripts appropriately
+```
+
+
+#Load Libraries
+```{r}
+
+library(here)
+library(tidyverse)
+library(lubridate)
+library(ggthemes)
+
+```
+
+
+#Loading Data
+```{r}
+
+Cond_Data <- read_csv(here("Week_05","Data","Cond_Data.csv")) # this allows us to designate where the data should be pulled from when it is on our local file
+Depth_Data <- read_csv(here("Week_05","Data","Depth_Data.csv")) # same as above
+
+```
+
+# Filtering, Organizing, and Joining Data
+```{r}
+
+Dep <- Depth_Data %>% 
+  mutate(date=ymd_hms(date)) # this allows us to add a column and read the data as a date instead of characters
+
+Con <- Cond_Data %>% #this allows us to create the function "Con" which will load the Cond_Data
+  mutate(date=mdy_hms(date), # this allows us to add the date column we created and brings over characters in the appropriate date format that we want
+         
+date=round_date(date,"10 seconds"))  # this allows us to round to the nearest 10-second interval for each point in time thats listed
+
+Con_Dep <- inner_join(Con,Dep) %>% # this allows us to join both "con" & "dep" data and only keepthe data categories that match and are also complete from both data sets
+  
+  mutate(Hour=hour(date)) %>% # this allows us to create a new "hour" column according to date
+  
+  mutate(Date_and_Minute=round_date(date, "minute"), # this allows us to create a "date" column and also rounds to the nearest minute
+         
+  Minute_Only=minute(Date_and_Minute)) %>% # this allows us to only keep the minutes from the "Date_and_Minute" column we created and create a new column for it
+  
+  pivot_longer(c(Temperature, Depth, Salinity), # this allows us to pivot these  categories "longer" which will gie us values based on their variable
+               
+               names_to="Variables", # this allows us to name of the column of the categories of temp, dpeth, salinity to a "Variables" column
+               
+               values_to="Values") %>%  # this allows us to name of the column for the values associated with each variable aforementioned
+  
+  group_by(Minute_Only, Variables) %>% # this allows us to group by our rounded date, corresponding minute, and the variables column
+  
+  summarise(Mean=mean(Values)) # this allows us to create a column of mean "Values"
+
+view(Con_Dep)
+
+```
+
+
+#Make Plot
+```{r}
+
+Con_Dep %>% ggplot(aes(x=Minute_Only,y=Mean,
+                      color=Variables)) + #this allows us to create a plot based on the mean of each minute according to category
+  
+  geom_smooth()+
+  facet_wrap(~Variables,scales="free") + #creates facets to see each  category separately and the "free" in scales allows each graph to have different y-values dependent on the values for each variable
+  
+  labs(x="Minute", title= "Mean Values by Minute") + # this allows us to name our graph and x-axis
+  
+  theme_clean()+ # This gives us a cleaner graph with dotted lines
+  
+  theme(legend.position = "bottom", plot.title = element_text(size = 15, face = "bold")) # this allows us to place the legend at the bottom, change the plot title size, and also make it bold
+  
+```
+

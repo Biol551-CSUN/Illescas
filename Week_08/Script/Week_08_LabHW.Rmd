@@ -1,0 +1,83 @@
+---
+title: "Week_08_Lab"
+author: "Sandy Illescas"
+date: "2023-06-06"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(
+	message = FALSE,
+	root.dir = "~/Users/SandyCruz/Desktop/Repositories/Illescas/Week_08",
+  fig.path = "Output/",
+	warning = FALSE,
+	include = TRUE
+)
+```
+
+# Load Libraries
+```{r}
+
+library(tidyverse)
+library(palmerpenguins)
+library(ggplot2)
+library(here)
+
+```
+
+
+# Create a Function that is not a Plot
+I will define a function that will calculate the sum of a species on each island
+```{r}
+
+
+species_by_island <- function(species_name) {
+  species_sum <- subset(penguins, 
+                         species == species_name)  # this allows us to filter the data set according to species
+  sum_by_island <- aggregate(species_sum$species, 
+                             by = list(species_sum$island), 
+                             FUN = length) # this allows us to calculate the count of the species according to each island
+  colnames(sum_by_island) <- c("island", "sum_species") # this allows us to rename the columns to make it a little more clear
+  return(sum_by_island)  # this allows us to return the result of the data frame outcome
+}
+
+# SHOW TWO EXAMPLES OF FUNCTION OUTCOME
+species_by_island("Gentoo") # this allows us to call the function according to species name, first example
+
+species_by_island("Adelie") # this allows us to call the function according to species name, second example
+
+```
+
+# Create a Funtion that is a Plot
+```{r}
+
+count_species_with_plot <- function(x, y, fill) { # this allows us to generate a plot of the number of occurrences of each species per category
+  species_counts <- aggregate(penguins$species, by = penguins[c(x, fill)], FUN = length) # this allows us to calculate the count of occurrences of each species per category
+  colnames(species_counts) <- c(x, "species", y) # this allows us to assign new column names
+  
+  # Create plot
+  library(ggplot2)
+  plot <- ggplot(species_counts, aes_string(x = x, y = y, fill = fill, color = fill)) + # this allows us to creat a plot using the data we set
+    geom_point() + # this allows us to pick the type of graph we want to see
+    labs(x = x, y = y, fill = fill) +
+    ggtitle("Number of Species per Island") + #this allows us to name graph title
+    theme_minimal() # this allows us to set a theme
+  
+  return(list(data = species_counts, plot = plot)) 
+}
+
+
+plot1_island <- count_species_with_plot(x = "island", y = "count", fill = "species")$plot
+print(plot1_island) # this allows us to call the function to see the plot
+
+ggsave(here("Week_08","Output", "By_Island.png"), plot = plot1_island) # this allows us to save the plot to the output folder 
+
+
+plot2_year <- count_species_with_plot(x = "year", y = "count", fill = "species")$plot
+print(plot2_year)# this allows us to call the function to see the plot
+
+ggsave(here("Week_08","Output", "By_Year.png"), plot = plot2_year) # this allows us to save the plot to the output folder 
+
+```
+

@@ -1,0 +1,88 @@
+---
+title: "Week_04b_HW"
+author: "Sandy Illescas"
+date: "2023-06-06"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(
+	message = FALSE,
+	root.dir = "~/Users/SandyCruz/Desktop/Repositories/Illescas/Week_10",
+  fig.path = "Output/",
+	warning = FALSE,
+	include = TRUE
+)
+```
+
+
+# Load Libraries
+```{r}
+
+library(tidyverse)
+library(here)
+library(extrafont)
+
+```
+
+# Load Data
+```{r}
+
+chemdata <- read_csv(here("Week_04","data","chemicaldata_maunalua.csv")) # this allows us to where data should be read from
+
+view(chemdata)
+
+```
+
+
+# Organizing and filtering our data
+```{r}
+
+Chem_Lab_Data <- chemdata %>% # this allows us to create a new data set
+  
+  filter(complete.cases(.)) %>% # this allows us to remove NAs from the dataset
+  
+  separate(col=Tide_time, # this allows us to create two different columns for  Tide_time to seperate the two values from the same column
+           
+      into=c("Tide","Time"), # this allows us to name of the columns appropriately
+      
+      sep="_", # this allows us to designate the character that will be used to separate the column in the appropriate place
+      
+      remove=TRUE) %>% # this allows us to remove the original column since we no longer need it
+  
+  filter(Tide=="High") %>% # this allows us to select the "High" values from this column
+  
+  pivot_longer(c(Phosphate,NN), #this allows us to convert our data from wide to long while preserving the relationship between the two variables
+               
+               names_to="Variables", # this allows us to designate name of the column which contains the data NN and Phosphate that we want to keep
+               
+               values_to="Values") %>% # this allows us to change the name of the column which contains the data NN and Phosphate that we want to keep
+  
+  group_by(Variables, Site, Temp_in, Time) %>% # this allows us to group the data by these columns
+  
+  summarise(Mean_Values=mean(Values)) # this allows us to calculate the mean and create a new column where our new values will go
+
+```
+
+
+# Making a Plot
+```{r}
+
+Chem_Lab_Data %>% # this allows us to load our data
+  
+  ggplot(aes(x=Temp_in, y=Mean_Values))+ # this allows us to create a plot and designate x and y axes
+  
+  geom_point(shape=18, size=2, color = "hotpink")+ # this allows us to choose the type of graph we want
+  
+  theme(text = element_text(family = "Chalkboard")) + #
+  facet_grid(Site~Variables,scale="free") + # create subplots, organized by the variables and by the site
+  labs(title="Temperature and Chemical Changes During High Tide", # this allows us to change the title of the plot
+       y="Mean (umol/L)", x="Temperature (Celcius)")+ # this allows us to change the titles for the x-axis and y-axis
+  theme()+ # this allows us to change the theme
+  theme(plot.title = element_text(size = 15, face = "bold")) # this allows us to change the plot title size
+
+ggsave(here("Week_04","Output","Week_4b_HW.png")) # this allows us to save location and file creation
+
+```
+

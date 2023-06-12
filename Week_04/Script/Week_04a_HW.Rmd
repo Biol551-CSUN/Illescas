@@ -1,0 +1,104 @@
+---
+title: "Week_04b_HW"
+author: "Sandy Illescas"
+date: "2023-06-06"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(
+	message = FALSE,
+	root.dir = "~/Users/SandyCruz/Desktop/Repositories/Illescas/Week_10",
+  fig.path = "Output/",
+	warning = FALSE,
+	include = TRUE
+)
+```
+
+
+```{r}
+# ASSIGNMENT:
+
+# 1.Remove all NAs, calculate the mean and variance of body mass by species, island, and sex.
+
+# 2. Filters out (i.e. excludes) male penguins, then calculates the log body mass, then selects only the columns for species, island, sex, and log body mass, then use these data to make any plot. Make sure the plot has clean and clear labels and follows best practices. Save the plot in the correct output folder.
+
+```
+
+
+# Load Libraries
+```{r}
+
+library(here)
+library(tidyverse)
+library(ggthemes)
+library(palmerpenguins)
+library(viridis)
+
+```
+
+# Load Data
+```{r}
+
+#using penguin dataset from "tidyverse"
+
+view(penguins)
+
+```
+
+
+# Organizing and filtering our data
+Remove all NAs, calculate mean and variance of body mass by species, island, and sex.
+```{r}
+
+mean_penguin <- penguins %>%   #this allows us to assign mean_data to this filtered penguin data
+  group_by(species, 
+           island, 
+           sex) %>%  # this allows us to group by species, island, and sex
+  drop_na (species, 
+           island, 
+           sex) %>%  # this allows us to remove all NA in all categories
+  summarise(mean_body_mass = mean(body_mass_g, 
+                                  na.rm = TRUE),  # this allows us to calculate the mean body mass
+            variance_body_mass = var(body_mass_g, 
+                                  na.rm = TRUE)) # this allows us to calculate the variance body mass
+
+view (mean_penguin) # this allows us to view our new dataset
+
+```
+
+
+# Making a Plot
+```{r}
+
+penguins %>%
+  filter(sex == "female") %>%  # this allows us to filter only females
+  mutate(log_body_mass = log(body_mass_g)) %>%  # this allows us to add a log body mass column
+  select (species,  # this allows us to select species, island, sex, and log columns
+          island, 
+          sex, 
+          log_body_mass) %>%
+  
+  ggplot(aes(x = species, y = log_body_mass, group = species, color = species)) + # this allows us to make a graph and assin axis
+  
+  geom_point(shape = 15, size = 1, color = "blue") + # this designates the type of graph to be made and also allows us to customize point shape, size, and color
+  
+  theme(text = element_text(family = "Chalkboard")) + #this allows us to change the font on our graph
+  labs(title = "Species and Log Body Mass", x = "Species", y = "Log Body Mass", color = "Species") + # this allows us to name our axis and title
+
+  theme(panel.grid.major = element_line(color = "gray",   # this allows us to create major grid lines at every y-break
+                                        linetype = "dashed"), 
+        panel.grid.minor = element_line(color = "gray", 
+                                        linetype = "dashed"), # this allows us to add minor grid lines between y-breaks so graph is easier to read
+        
+        axis.title.x = element_text(vjust = -0.5), # this allows us to adjust the x-axis so it doesn't go into graph
+        
+        axis.title.y = element_text(vjust = 2.5), # this allows us to adjust the y-axis so it doesn't go into graph
+        axis.title = element_text(face = "bold"), #this bolds axis titles
+        plot.title = element_text(hjust = 0.5), #adjusts plot title to the right
+        panel.background = element_rect(fill = "lightgray")) #beige background color
+  
+  ggsave(here("Week_04", "Output", "Week_04a_HW.png"))
+
+```

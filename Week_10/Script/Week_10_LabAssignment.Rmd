@@ -1,0 +1,74 @@
+---
+title: "Week_10_HW"
+author: "Sandy Illescas"
+date: "2023-06-07"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(
+	message = FALSE,
+	root.dir = "~/Users/SandyCruz/Desktop/Repositories/Illescas/Week_10",
+  fig.path = "Output/",
+	warning = FALSE,
+	include = TRUE
+)
+```
+
+
+# Load Data
+```{r}
+
+library(tidyverse)
+library(datapasta)
+library(reprex)
+
+```
+
+# Load the penguins dataset
+```{r}
+
+data(penguins, package = "palmerpenguins")
+
+```
+
+
+
+# Make Buggy Function
+Calculate the Average Body Mass
+```{r}
+
+calculate_average <- function(data) {
+  total <- sum(data$body_mass_g)
+  count <- length(data$body_mass_g)
+  
+  average <- total * count  # Bug: incorrect calculation, instead of dividing by the count, it is multiplying the count
+  
+  return(average)
+}
+
+```
+
+
+
+# Test the Function and Reproduce 
+Here we will be using "datapasta" and "reprex"
+```{r}
+
+result <- calculate_average(penguins) 
+result #this calls back our result
+
+print(result) # print the result
+
+# use datapasta to create reproducible code
+df_paste <- dpasta(result)
+
+# use reprex to create reproducible example
+reprex(df_paste)
+
+sessionInfo()
+
+
+```
+

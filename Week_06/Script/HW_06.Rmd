@@ -1,0 +1,84 @@
+---
+title: "HW 06"
+author: "Sandy Illescas"
+date: "2023-06-01"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(
+	message = FALSE,
+	root.dir = "~/Users/SandyCruz/Desktop/Repositories/Illescas/Week_06",
+  fig.path = "Output/",
+	warning = FALSE,
+	include = TRUE
+)
+```
+
+```{r, include=FALSE}
+
+#ASSIGNMENT DETAILS:
+#-Take any of the data sheets you have already worked with in class and create at least one table and one figure in an Rmarkdown file.
+#-Create the most beautiful RMarkdown output you can during lab hours in either an html, github doc, or pdf format.
+#-Make sure you have headings with clear explanations of what you are doing.
+#-Practice using markdown formatting with bold, italics, and lists (use each of these at least once).
+#-Make sure your outputs and scripts are saved in the appropriate folders. Keep proper coding etiquette (figures need to be pub quality as usual and you need to comment your code).
+
+```
+
+
+# Load Libraries
+I'll be using **_Penguins_** data for ease of use
+```{r}
+library(here)
+library(tidyverse)
+library(kableExtra)
+library(palmerpenguins)
+
+```
+
+
+# Creating a **Plot** with _Penguins_ Data
+```{r PenguinsHW06}
+penguins %>%
+  ggplot(aes(x = bill_length_mm, # this allows us to create a scatter plot grouped by island with different colors for each island to differentiate
+          y = bill_depth_mm, 
+         color = island,
+         group = island)) +
+  geom_point(shape = 17, size = 3) +
+  labs(x = "Bill Length (mm)", y = "Bill Depth (mm)",
+       title = "Bill Length and Depth According to Island",
+       color = "Island") +  # this allows us to change the legend title
+  theme_bw()+ # This gives us a cleaner graph with dotted lines
+  theme(legend.position = "right", plot.title = element_text(size = 15, face = "bold"))
+
+  
+```
+
+# Create a **Table** with _Penguins_ Data
+```{r, fig.height=3}
+penguins %>%
+  group_by(island) %>% # this allows us to group by island
+  select(bill_length_mm, body_mass_g) %>% # this allows us to select the bill length and the body mass columns
+  summarise(billmean = mean(bill_length_mm, na.rm = TRUE), # calculates mean for bill length
+            bodymean = mean(body_mass_g, na.rm = TRUE)) %>%# this allows us to calculate mean for body mass
+  kbl() %>% # creates a kable table
+  kable_styling(full_width = FALSE) %>% # this allows us to set the width to be thinner so it doesn't take up the whole page
+  add_header_above(c("Island" = 1, "Bill Length Mean (mm)" = 1, "Body Mass Mean (g)" = 1)) # this allows us to add new column names to include units of measure.  For the life of me, I couldn't figure out how to remove the default column names :( 
+ 
+```
+
+# Creating a List in R Markdown  
+
+Here we are learning how to create a list.  
+This list will outline how to change your RStudio appearance to make it  **_"easier"_** to find your *"comma"* and *"paranthesis"* mistakes.
+
+  1. Open RStudio.  
+  2. Click on the "Tools" tab.  
+  3. Select "Global Options".  
+  4. On the left side panel, select "Appearance".  
+  5. On right side panel, you can change default font, font size, and you can also
+      browse through "Editor theme" to change colors.
+  6. Once you have made your appropriate changes, click "Apply" on the bottom right
+      to finalize your changes. 

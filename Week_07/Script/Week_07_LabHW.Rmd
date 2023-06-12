@@ -1,0 +1,77 @@
+---
+title: "Week 07 Lab HW"
+author: "Sandy Illescas"
+date: "2023-06-01"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	message = FALSE,
+	root.dir = "~/Users/SandyCruz/Desktop/Repositories/Illescas/Week_07",
+  fig.path = "Output/",
+	warning = FALSE,
+	include = TRUE
+)
+
+```
+
+```{r}
+# ASSIGNMENT DETAILS: 
+
+#You need to make a map using RMarkdown with one of the following datasets from past Tidy Tuesdays. Make sure, as usual, that you scripts and output are saved appropriately.
+
+#Plastic pollution
+
+#Cats on the move!
+
+#Where is Bigfoot!
+
+#Meteorites
+
+```
+
+
+# Load Libraries
+```{r}
+
+library(ggplot2)
+library(maps)
+library(readr)
+
+```
+
+# Load Data
+```{r}
+
+meteorites <- readr::read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-06-11/meteorites.csv")
+
+head(meteorites)
+
+```
+
+# Organize Data and Making a Map
+```{r}
+
+
+meteorites <- na.omit(meteorites[, c("long", "lat")]) # this allows us to remove all N/As
+
+if (nrow(meteorites) > 0) { # this allows us to set a "conditional" statement to make sure there is a value above zero
+ 
+  world_map <- map_data("world")  # this allows us to create a basic world map
+
+  
+  ggplot() +
+    geom_polygon(data = world_map, aes(x = long, y = lat, group = group), fill = "lightgray", color = "black") + # this allows us to make a world map that will place a point on each long/lat location the dataset has
+    geom_point(data = meteorites, aes(x = long, y = lat), color = "firebrick", size = 0.1) +
+    labs(x = "Longitude", 
+         y = "Latitude", 
+         title = "Meteorite Landings") + # this allows us to rename our x-axis, y-axis, and our title 
+    theme_bw() +
+    theme(plot.title = element_text(size = 16, color = "firebrick", face = "bold"))
+} else {
+  cat("No valid values found.") # this allows us to know when no valid values are found, if any
+}
+
+```
+
