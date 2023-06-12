@@ -1,0 +1,131 @@
+---
+title: "BadPlot_GoodPlot"
+author: "Sandy Illescas"
+date: "2023-06-08"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(
+	message = FALSE,
+	root.dir = "~/Users/SandyCruz/Desktop/Repositories/Illescas/BadPlot_GoodPlot",
+  fig.path = "Output/",
+	warning = FALSE,
+	include = TRUE
+)
+```
+
+# Load Libraries
+```{r}
+
+library(ggplot2)
+
+```
+
+
+# Load Data
+```{r}
+
+data("diamonds") # this allows us to load the diamonds dataset from ggplot
+
+```
+
+
+# Creating the **"Bad Plot"**
+```{r}
+
+bad_plot <- ggplot(diamonds, aes(x = carat, y = price, color = cut)) + # this allows us to create a plot and designate x and y axes
+  geom_point(size = 0.5, alpha = 0.5) + # this allows us to choose the type of plot we want to make and also customize point size and shape
+  geom_smooth(method = "lm", se = FALSE, linetype = 2, color = "black", size = 0.8) + # this allows us add a linear regression line where the standard error is not included and also allows us to customize the color and thickness of the line
+  coord_cartesian(ylim = c(0, 10000),
+                  xlim = c(0, 30)) + # this allows us set an upper limit to the y-axis which will cause a misleading upper range to the viewer
+  labs(title = "diamond price by carat", x = "carat", y = "price", color = "type") + # this allows us to label our graph, which in this case I have ommitted some crucial data that a viewer would normally expect to see
+  theme_bw() + #sets theme
+  theme(
+    plot.title = element_text(face = "bold", size = 10, hjust = 0.5), # these lines allow us to customize the elements of the titles, subtitiles, x-axis, y-axis, and legend, we can change size, position and appearance. In this case I have made unappealing requests in my code
+    axis.title = element_text(face = "bold", size = 6),
+    axis.text = element_text(size = 3),
+    legend.title = element_text(face = "bold", size = 5),
+    legend.text = element_text(size = 5)
+  )
+
+# Displaying the bad plot
+bad_plot
+
+
+```
+
+# Here's a list of **WHY** this is considered a **"Bad Plot"**
+
+The bad plot violates many principles of data visualization that we have learned throughtout the semester:
+
+1. Contains a misleading scale: I capped the y-axis  at 10,000, to make it difficult to interpret the actual price range of diamonds since the top range has been cut off.
+
+2. Lack of transparency: I made the points and the linear regression line have low transparency and also overlapped data points make it hard to differentiate betwen graphed values.
+
+3. Inaccurate regression line: I plotted the LR line with a "dashed" line, giving a false impression of the accuracy and precision of the linear regression.
+
+4. Unnecessary data manipulation: I set the y-axis maximum to 10,000, even though the dataset contains diamonds with higher prices, leading to a distorted representation of the data, and also causes us to lose values above our capped limit. The x-axis limit was made larger so the graph is distorted and useless
+
+5. Poor color choice: I used the "cut" variable to assign colors to the points, but the color palette chosen does not effectively represent the "ordinal" nature of the "cut" variable.
+
+6. I left out the units for both axis labels to make it unclear whether the "Carat" represents weight or size and what currency the "Price" represents, maybe dollars...maybe pounds, who knows! I also made the text too small to read without zooming in.
+
+7. Insufficient legend design: I did not designate a legend title to make it unclear what the legend represents and I also made the legend text size too small to see clearly, making it difficult to read and interpret the color mappings.
+
+8. Lack of context: The plot lacks a clear description or context in general, leaving the viewer without sufficient information to interpret the data accurately.
+
+By "forgetting" everythign I learned to do in lab, the **Bad Plot** becomes misleading, difficult to interpret, aesthetically unappealing, and lacking information that would be crucial to a buyer, which undermines the effectiveness of the visualization I put forth.
+
+
+# Creating the **"Good Plot"**
+```{r}
+
+good_plot <- ggplot(diamonds, aes(x = carat, y = price, color = cut)) + # this allows us to create a plot and designate x and y axes
+  geom_point(shape = 18, size = 0.9) + # this allows us to choose the type of plot we want to make and also customize point size and shape
+  geom_smooth(method = "lm", se = FALSE, linetype = 1, color = "black", size = 1) +  # this allows us add a linear regression line where the standard error is not included and also allows us to customize the color and thickness of the line
+  coord_cartesian(ylim = c(0, 20000), # this allows us to set a lower and upper limit to both the x-axis and the y-axis
+                  xlim = c(0, 4.0)) +
+  scale_color_brewer(palette = "Blues") + # this allows us to use the "Blues" color pallette
+   guides(colour = guide_legend(override.aes = list(size = 4))) + # this allows us to override the size of the legend point sizes to make them easier to see and are more visually appealing
+  labs(title = "Diamond Price by Carat", subtitle = "Lab created diamonds are sounding pretty good!", x = "Carat (Weight)", y = "Price ($)", color = "Diamond Cut") + # This allows us to label our graph to our liking, making sure to represent the data correcly
+  theme_bw() + # this alows us to set the theme to keep our graph tidy and visually appealing
+  theme(
+    plot.title = element_text(face = "bold", size = 20, hjust = 0.5), # this allows us to customize the elements of the titles, subtitiles, x-axis, y-axis, and legend, we can change size, position and appearance.
+    axis.title = element_text(face = "bold", size = 14),
+    plot.subtitle = element_text(face = "italic", size = 14, hjust = 0.5),
+    axis.text = element_text(size = 12),
+    legend.title = element_text(face = "bold", size = 14),
+    legend.text = element_text(size = 12),
+    legend.position = "bottom", # this places legend at the botton, instead of the standard right side to make graph more visually appealing
+  )
+
+# Displaying the good plot
+good_plot
+
+```
+
+# Here's a list of **WHY** this should be considered a **"Good Plot"**
+
+This is how the good plot adheres to principles of data visualization by following the practices we have learned throughtout the class time:
+
+1. This graph with clear and appropriate scaling: I made sure the axes are properly scaled, displaying the full range of data without distorting the relationship between carat and price. However, I had a hard time trying to figure out how to make the legend points larger so they would be easier to see. 
+
+2. Appropriate transparency and size: I made the points with moderate transparency and slightly larger size, I also changed the shape to allow easier identification of the overlapping data points.
+
+3. Accurate and visually appealing regression line: I plotted the LR line with a solid line to accurately represent the fitted trend without misleading precision.
+
+4. Effective color choice: The color palette is chosen from the color brewer palette "Blues," which provides a visually appealing and meaningful representation of the ordinal "cut" variable and the dots get "darker" blue as the diamond cut increases in quality.
+
+5. Proper labeling: I labeled the x-axis, "Carat (Weight)" to properly represent data and also contains the units of measure for clarification. For the y-axis, I labeled it as "Price ($)" to specify the unit of measurement being dollars. I provided a better title providing a better description of the data being visualized to provide clarity to the viewer.
+
+6. Consistent aesthetics: I adjusted the point size, transparency, and color mapping so they are consistent across all elements, creating visual harmony.
+
+7. Well-designed legend: I provided a clear title for the legend indicating the "cut" variable so we know how it is being scaled. The legend text size is appropriate for readability and matches the overall aesthetics of the rest of the plot. I also positioned the legend at the bottom to avoid overlapping with the data, making it easier to read, and I also increased the size of the points on the legend for the viewer to see it more clearly
+
+8. Thoughtful theme selection: I chose the the theme_bw() because it provides a clean and uncluttered background without color to allow points to "pop" out, this also helps to reduce distractions.
+
+By applying the good practices and principles we learned in class, the good plot presents the data accurately, it is also visually appealing, and provides clear insights into the relationship between carat and price for different diamond cuts.  This represents all the elements that a **"Good Plot"** should contain.
+
+
